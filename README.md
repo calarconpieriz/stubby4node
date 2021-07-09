@@ -1,5 +1,7 @@
-[![Build Status](https://secure.travis-ci.org/mrak/stubby4node.png?branch=master)](http://travis-ci.org/mrak/stubby4node)
-[![NPM version](https://badge.fury.io/js/stubby.png)](http://badge.fury.io/js/stubby)
+
+# @calarconpieriz/stubby4node
+
+A maintained fork of `stubby4node`.
 
 stubby4node
 ===========
