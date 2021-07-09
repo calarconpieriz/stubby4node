@@ -2,7 +2,7 @@
 
 const contract = require('../models/contract');
 const Portal = require('./portal').Portal;
-const ns = require('node-static');
+const ns = require('@brettz9/node-static');
 const path = require('path');
 const status = new ns.Server(path.resolve(__dirname, '../../webroot'));
 const urlPattern = /^\/([1-9][0-9]*)?$/;
