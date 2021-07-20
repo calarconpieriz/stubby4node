@@ -1,6 +1,6 @@
 {
   "name": "@calarconpieriz/stubby",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "author": {
     "name": "Cristian Alarcón",
     "email": "calarconpieriz@gmail.com"
@@ -56,8 +56,7 @@
     "@brettz9/node-static": "^0.1.1",
     "ejs": "^3.1.6",
     "isutf8": "^3.1.1",
-    "js-yaml": "^4.0.0",
-    "node-static": "^0.7.11"
+    "js-yaml": "^4.0.0"
   },
   "devDependencies": {
     "mocha": "^8.3.1",
