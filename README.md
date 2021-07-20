@@ -1,10 +1,8 @@
-
 # @calarconpieriz/stubby4node
 
 A maintained fork of `stubby4node`.
 
-stubby4node
-===========
+# stubby4node
 
 A configurable server for mocking/stubbing external systems during development.
 
@@ -12,18 +10,18 @@ A configurable server for mocking/stubbing external systems during development.
 
 ## Table of Contents
 
-* [Installation](#installation)
-* [Supported Runtimes](#supported-runtimes)
-* [Starting the Server(s)](#starting-the-servers)
-* [Command-line Switches](#command-line-switches)
-* [Endpoint Configuration](#endpoint-configuration)
-* [Dynamic Token Interpolation](#dynamic-token-interpolation)
-* [The Admin Portal](#the-admin-portal)
-* [The Stubs Portal](#the-stubs-portal)
-* [Programmatic API](#programmatic-api)
-* [See Also](#see-also)
-* [TODO](#todo)
-* [NOTES](#notes)
+- [Installation](#installation)
+- [Supported Runtimes](#supported-runtimes)
+- [Starting the Server(s)](#starting-the-servers)
+- [Command-line Switches](#command-line-switches)
+- [Endpoint Configuration](#endpoint-configuration)
+- [Dynamic Token Interpolation](#dynamic-token-interpolation)
+- [The Admin Portal](#the-admin-portal)
+- [The Stubs Portal](#the-stubs-portal)
+- [Programmatic API](#programmatic-api)
+- [See Also](#see-also)
+- [TODO](#todo)
+- [NOTES](#notes)
 
 ## Installation
 
@@ -41,7 +39,7 @@ This will install `stubby` as a command in your `PATH`. Leave off the `-g` flag 
 
 ## Supported Runtimes
 
-* [node.js](http://nodejs.org/) - latest and currently supported LTS versions
+- [node.js](http://nodejs.org/) - latest and currently supported LTS versions
 
 Development is on x86-64 Linux.
 
@@ -79,34 +77,35 @@ When used from the command-line, `stubby` responds to the `SIGHUP` signal to rel
 This section explains the usage, intent and behavior of each property on the `request` and `response` objects.
 
 Here is a fully-populated, unrealistic endpoint:
+
 ```yaml
--  request:
-      url: ^/your/awesome/endpoint$
-      method: POST
-      query:
-         exclamation: post requests can have query strings!
-      headers:
-         content-type: application/xml
-      post: >
-         <!xml blah="blah blah blah">
-         <envelope>
-            <unaryTag/>
-         </envelope>
-      file: tryMyFirst.xml
-   response:
+- request:
+    url: ^/your/awesome/endpoint$
+    method: POST
+    query:
+      exclamation: post requests can have query strings!
+    headers:
+      content-type: application/xml
+    post: >
+      <!xml blah="blah blah blah">
+      <envelope>
+         <unaryTag/>
+      </envelope>
+    file: tryMyFirst.xml
+  response:
     - status: 200
       latency: 5000
       headers:
-         content-type: application/xml
-         server: stubbedServer/4.2
+        content-type: application/xml
+        server: stubbedServer/4.2
       body: >
-         <!xml blah="blah blah blah">
-         <responseXML>
-            <content></content>
-         </responseXML>
+        <!xml blah="blah blah blah">
+        <responseXML>
+           <content></content>
+        </responseXML>
       file: responseData.xml
     - status: 200
-      body: "Haha!"
+      body: 'Haha!'
 ```
 
 ### request
@@ -115,85 +114,87 @@ This object is used to match an incoming request to stubby against the available
 
 #### url (required)
 
-* is a full-fledged __regular expression__
-* This is the only required property of an endpoint.
-* signify the url after the base host and port (i.e. after `localhost:8882`).
-* any query parameters are stripped (so don't include them, that's what `query` is for).
-    * `/url?some=value&another=value` becomes `/url`
-* no checking is done for URI-encoding compliance.
-    * If it's invalid, it won't ever trigger a match.
+- is a full-fledged **regular expression**
+- This is the only required property of an endpoint.
+- signify the url after the base host and port (i.e. after `localhost:8882`).
+- any query parameters are stripped (so don't include them, that's what `query` is for).
+  - `/url?some=value&another=value` becomes `/url`
+- no checking is done for URI-encoding compliance.
+  - If it's invalid, it won't ever trigger a match.
 
 This is the simplest you can get:
+
 ```yaml
--  request:
-      url: /
+- request:
+    url: /
 ```
 
 A demonstration using regular expressions:
+
 ```yaml
--  request:
-      url: ^/has/to/begin/with/this/
+- request:
+    url: ^/has/to/begin/with/this/
 
--  request:
-      url: /has/to/end/with/this/$
+- request:
+    url: /has/to/end/with/this/$
 
--  request:
-      url: ^/must/be/this/exactly/with/optional/trailing/slash/?$
+- request:
+    url: ^/must/be/this/exactly/with/optional/trailing/slash/?$
 ```
 
 #### method
 
-* defaults to `GET`.
-* case-insensitive.
-* can be any of the following:
-    * HEAD
-    * GET
-    * POST
-    * PUT
-    * DELETE
-    * etc.
+- defaults to `GET`.
+- case-insensitive.
+- can be any of the following:
+  - HEAD
+  - GET
+  - POST
+  - PUT
+  - DELETE
+  - etc.
 
 ```yaml
--  request:
-      url: /anything
-      method: GET
+- request:
+    url: /anything
+    method: GET
 ```
 
-* it can also be an array of values.
+- it can also be an array of values.
 
 ```yaml
--  request:
-      url: /anything
-      method: [GET, HEAD]
+- request:
+    url: /anything
+    method: [GET, HEAD]
 
--  request:
-     url: ^/yonder
-     method:
-       -  GET
-       -  HEAD
-       -  POST
+- request:
+    url: ^/yonder
+    method:
+      - GET
+      - HEAD
+      - POST
 ```
 
 #### query
 
-* values are full-fledged __regular expressions__
-* if omitted, stubby ignores query parameters for the given url.
-* a yaml hashmap of variable/value pairs.
-* allows the query parameters to appear in any order in a uri
+- values are full-fledged **regular expressions**
+- if omitted, stubby ignores query parameters for the given url.
+- a yaml hashmap of variable/value pairs.
+- allows the query parameters to appear in any order in a uri
 
-* The following will match either of these:
-    * `/with/parameters?search=search+terms&filter=month`
-    * `/with/parameters?filter=month&search=search+terms`
+- The following will match either of these:
+  - `/with/parameters?search=search+terms&filter=month`
+  - `/with/parameters?filter=month&search=search+terms`
 
 ```yaml
--  request:
-     url: ^/with/parameters$
-     query:
-       search: search terms
-       filter: month
+- request:
+    url: ^/with/parameters$
+    query:
+      search: search terms
+      filter: month
 ```
 
-__NOTE__: repeated querystring keys (often array representations) will have
+**NOTE**: repeated querystring keys (often array representations) will have
 their values converted to a comma-separated list.
 
 ```
@@ -211,79 +212,80 @@ will be matched by:
 
 #### post
 
-* is a full-fledged __regular expression__
-* if omitted, any post data is ignored.
-* the body contents of the server request, such as form data.
+- is a full-fledged **regular expression**
+- if omitted, any post data is ignored.
+- the body contents of the server request, such as form data.
 
 ```yaml
--  request:
-      url: ^/post/form/data$
-      post: name=John&email=john@example.com
+- request:
+    url: ^/post/form/data$
+    post: name=John&email=john@example.com
 ```
 
 #### file
 
-* if supplied, replaces `post` with the contents of the locally given file.
-    * paths are relative from where the `--data` file is located
-* if the file is not found when the request is made, falls back to `post` for matching.
-* allows you to split up stubby data across multiple files
+- if supplied, replaces `post` with the contents of the locally given file.
+  - paths are relative from where the `--data` file is located
+- if the file is not found when the request is made, falls back to `post` for matching.
+- allows you to split up stubby data across multiple files
 
 ```yaml
--  request:
-      url: ^/match/against/file$
-      file: postedData.json
-      post: '{"fallback":"data"}'
+- request:
+    url: ^/match/against/file$
+    file: postedData.json
+    post: '{"fallback":"data"}'
 ```
 
 postedData.json
+
 ```json
-{"fileContents":"match against this if the file is here"}
+{ "fileContents": "match against this if the file is here" }
 ```
 
-* if `postedData.json` doesn't exist on the filesystem when `/match/against/file` is requested, stubby will match post contents against `{"fallback":"data"}` (from `post`) instead.
+- if `postedData.json` doesn't exist on the filesystem when `/match/against/file` is requested, stubby will match post contents against `{"fallback":"data"}` (from `post`) instead.
 
 #### json
 
-* not used if `post` or `file` are present.
-* will be parsed into a JavaScript object.
-* allows you to specify a JSON string that will be deeply compared with a JSON request
+- not used if `post` or `file` are present.
+- will be parsed into a JavaScript object.
+- allows you to specify a JSON string that will be deeply compared with a JSON request
 
 Although not required, it is recommended to also specify a `application/json` header requirement.
 
 ```yaml
--  request:
-      url: ^/match/against/jsonString$
-      headers:
-         content-type: application/json
-      json: '{"key1":"value1","key2":"value2"}'
+- request:
+    url: ^/match/against/jsonString$
+    headers:
+      content-type: application/json
+    json: '{"key1":"value1","key2":"value2"}'
 ```
 
 JSON strings may contain `"key": "value"` pairs in any order: `{"key1":"value1", "key2":"value2"}` is equivalent to `{"key2":"value2", "key1":"value1"}`
 
 #### headers
 
-* values are full-fledged __regular expressions__
-* if omitted, stubby ignores headers for the given url.
-* case-insensitive matching of header names.
-* a hashmap of header/value pairs similar to `query`.
+- values are full-fledged **regular expressions**
+- if omitted, stubby ignores headers for the given url.
+- case-insensitive matching of header names.
+- a hashmap of header/value pairs similar to `query`.
 
 The following endpoint only accepts requests with `application/json` post values:
 
 ```yaml
--  request:
-      url: /post/json
-      method: post
-      headers:
-         content-type: application/json
+- request:
+    url: /post/json
+    method: post
+    headers:
+      content-type: application/json
 ```
 
 ### response
 
 Assuming a match has been made against the given `request` object, data from `response` is used to build the stubbed response back to the client.
 
-__ALSO:__ The `response` property can also be a yaml sequence of responses that cycle as each request is made.
+**ALSO:** The `response` property can also be a yaml sequence of responses that cycle as each request is made.
 
-__ALSO:__ The `response` property can also be a url (string) or sequence of object/urls. The url will be used to record a response object to be used in calls to stubby. When used this way, data from the `request` portion of the endpoint will be used to assemble a request to the url given as the `response`.
+**ALSO:** The `response` property can also be a url (string) or sequence of object/urls. The url will be used to record a response object to be used in calls to stubby. When used this way, data from the `request` portion of the endpoint will be used to assemble a request to the url given as the `response`.
 
 ```yaml
 - request:
@@ -298,79 +300,79 @@ __ALSO:__ The `response` property can also be a url (string) or sequence of obje
 - request:
     url: /object/and/url/in/sequence
   response:
-  - http://google.com
-  - status: 200
-    body: 'second hit'
+    - http://google.com
+    - status: 200
+      body: 'second hit'
 ```
 
 #### status
 
-* the HTTP status code of the response.
-* integer or integer-like string.
-* defaults to `200`.
+- the HTTP status code of the response.
+- integer or integer-like string.
+- defaults to `200`.
 
 ```yaml
--  request:
-      url: ^/im/a/teapot$
-      method: POST
-   response:
-      status: 420
+- request:
+    url: ^/im/a/teapot$
+    method: POST
+  response:
+    status: 420
 ```
 
 #### body
 
-* contents of the response body
-* defaults to an empty content body
+- contents of the response body
+- defaults to an empty content body
 
 ```yaml
--  request:
-      url: ^/give/me/a/smile$
-   response:
-      body: ':)'
+- request:
+    url: ^/give/me/a/smile$
+  response:
+    body: ':)'
 ```
 
 #### file
 
-* similar to `request.file`, but the contents of the file are used as the `body`.
+- similar to `request.file`, but the contents of the file are used as the `body`.
 
 ```yaml
--  request:
-      url: /
-   response:
-      file: extremelyLongJsonFile.json
+- request:
+    url: /
+  response:
+    file: extremelyLongJsonFile.json
 ```
 
 #### headers
 
-* similar to `request.headers` except that these are sent back to the client.
+- similar to `request.headers` except that these are sent back to the client.
 
 ```yaml
--  request:
-      url: ^/give/me/some/json$
-   response:
-      headers:
-         content-type: application/json
-      body: >
-         [{
-            "name":"John",
-            "email":"john@example.com"
-         },{
-            "name":"Jane",
-            "email":"jane@example.com"
-         }]
+- request:
+    url: ^/give/me/some/json$
+  response:
+    headers:
+      content-type: application/json
+    body: >
+      [{
+         "name":"John",
+         "email":"john@example.com"
+      },{
+         "name":"Jane",
+         "email":"jane@example.com"
+      }]
 ```
 
 #### latency
 
-* time to wait, in milliseconds, before sending back the response
-* good for testing timeouts, or slow connections
+- time to wait, in milliseconds, before sending back the response
+- good for testing timeouts, or slow connections
 
 ```yaml
--  request:
-      url: ^/hello/to/jupiter$
-   response:
-      latency: 800000
-      body: Hello, World!
+- request:
+    url: ^/hello/to/jupiter$
+  response:
+    latency: 800000
+    body: Hello, World!
 ```
 
 ## Dynamic Token Interpolation
@@ -379,17 +381,17 @@ While `stubby` is matching request data against configured endpoints, it is keep
 These capture groups can be referenced in `response` data. Here's an example
 
 ```yaml
--  request:
-      method: [GET]
-      url: ^/account/(\d{5})/category/([a-zA-Z]+)
-      query:
-         date: "([a-zA-Z]+)"
-      headers:
-         custom-header: "[0-9]+"
+- request:
+    method: [GET]
+    url: ^/account/(\d{5})/category/([a-zA-Z]+)
+    query:
+      date: '([a-zA-Z]+)'
+    headers:
+      custom-header: '[0-9]+'
 
-   response:
-      status: 200
-      body: Returned invoice number# <% url[1] %> in category '<% url[2] %>' on the date '<% query.date[1] %>', using header custom-header <% headers.custom-header[0] %>
+  response:
+    status: 200
+    body: Returned invoice number# <% url[1] %> in category '<% url[2] %>' on the date '<% query.date[1] %>', using header custom-header <% headers.custom-header[0] %>
 ```
 
 The `url` regex `^/account/(\d{5})/category/([a-zA-Z]+)` has two defined capturing groups: `(\d{5})` and `([a-zA-Z]+)`. The `query` regex has one defined capturing group: `([a-zA-Z]+)`.
@@ -398,14 +400,14 @@ Although the `headers` do not have capturing groups defined explicitly (no regex
 
 ### Templating `body` and `file`
 
-The `response.body` can have token interpolations following the format of `< %PROPERTY_NAME[CAPTURING_GROUP_ID] %>`. If it is a token that corresponds to `headers` or `query` member matches, then the token structure would be `<% HEADERS_OR_QUERY.[KEY_NAME][CAPTURING_GROUP_ID] %>.
+The `response.body` can have token interpolations following the format of `< %PROPERTY_NAME[CAPTURING_GROUP_ID] %>`. If it is a token that corresponds to `headers` or `query` member matches, then the token structure would be `<% HEADERS_OR_QUERY.[KEY_NAME][capturing_group_id] %>.
 
 ```yaml
-  response:
-    body: The "content-type" header value was <% headers.content-type[0] %>.
+response:
+  body: The "content-type" header value was <% headers.content-type[0] %>.
 ```
 
-__NOTE:__ If you are using the `file` property for your responses, keep in mind that the
+**NOTE:** If you are using the `file` property for your responses, keep in mind that the
 both the file _name_ and _contents_ are interpolated. In other words, the `<% ... %>` will appear in the files' contents as well as on the line in your configuration that has `response.file`
 
 ### Capture group IDs
@@ -449,10 +451,10 @@ If the incoming `url` is `/resource/abc-123`, the capture groups would be:
 
 ### Troubleshooting
 
-* Make sure that the regex you used in your stubby configuration actually does what it supposed to do. Validate that it works via the node REPL (or similar) before using it in stubby
-* Make sure that the regex has capturing groups for the parts of regex you want to capture as token values. In other words, make sure that you did not forget the parentheses within your regex if your token IDs start from `1`
-* Make sure that you are using token ID zero when wanting to use __full__ regex match as the token value
-* Make sure that the token names you used in your template are correct: check that property name is correct, capturing group IDs, token ID of the __full__ match, the `<%` and `%>`
+- Make sure that the regex you used in your stubby configuration actually does what it supposed to do. Validate that it works via the node REPL (or similar) before using it in stubby
+- Make sure that the regex has capturing groups for the parts of regex you want to capture as token values. In other words, make sure that you did not forget the parentheses within your regex if your token IDs start from `1`
+- Make sure that you are using token ID zero when wanting to use **full** regex match as the token value
+- Make sure that the token names you used in your template are correct: check that property name is correct, capturing group IDs, token ID of the **full** match, the `<%` and `%>`
 
 ## The Admin Portal
 
@@ -462,64 +464,66 @@ The admin portal is a RESTful(ish) endpoint running on `localhost:8889`. Or wher
 
 Submit `POST` requests to `localhost:8889`, `PUT` requests to `localhost:8889/:id`[\*](#getting-the-id-of-a-loaded-endpoint), or load a data-file (-d) with the following structure for each endpoint:
 
-* `request`: describes the client's call to the server
-   * `method`: GET/POST/PUT/DELETE/etc.
-   * `url`: the URI regex string.
-   * `query`: a key/value map of query string parameters included with the request
-   * `headers`: a key/value map of headers the server should respond to
-   * `post`: a string matching the textual body of the response.
-   * `file`: if specified, returns the contents of the given file as the request post. If the file cannot be found at request time, **post** is used instead
-* `response`: describes the server's response to the client
-   * `headers`: a key/value map of headers the server should use in it's response
-   * `latency`: the time in milliseconds the server should wait before responding. Useful for testing timeouts and latency
-   * `file`: if specified, returns the contents of the given file as the response body. If the file cannot be found at request time, **body** is used instead
-   * `body`: the textual body of the server's response to the client
-   * `status`: the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
+- `request`: describes the client's call to the server
+  - `method`: GET/POST/PUT/DELETE/etc.
+  - `url`: the URI regex string.
+  - `query`: a key/value map of query string parameters included with the request
+  - `headers`: a key/value map of headers the server should respond to
+  - `post`: a string matching the textual body of the response.
+  - `file`: if specified, returns the contents of the given file as the request post. If the file cannot be found at request time, **post** is used instead
+- `response`: describes the server's response to the client
+  - `headers`: a key/value map of headers the server should use in it's response
+  - `latency`: the time in milliseconds the server should wait before responding. Useful for testing timeouts and latency
+  - `file`: if specified, returns the contents of the given file as the response body. If the file cannot be found at request time, **body** is used instead
+  - `body`: the textual body of the server's response to the client
+  - `status`: the numerical HTTP status code (200 for OK, 404 for NOT FOUND, etc.)
 
 #### YAML
+
 ```yaml
--  request:
-      url: ^/path/to/something$
-      method: POST
-      headers:
-         authorization: "Basic usernamez:passwordinBase64"
-      post: this is some post data in textual format
-   response:
-      headers:
-         Content-Type: application/json
-      latency: 1000
-      status: 200
-      body: Your request was successfully processed!
+- request:
+    url: ^/path/to/something$
+    method: POST
+    headers:
+      authorization: 'Basic usernamez:passwordinBase64'
+    post: this is some post data in textual format
+  response:
+    headers:
+      Content-Type: application/json
+    latency: 1000
+    status: 200
+    body: Your request was successfully processed!
 
--  request:
-      url: ^/path/to/anotherThing
-      query:
-         a: anything
-         b: more
-      method: GET
-      headers:
-         Content-Type: application/json
-      post:
-   response:
-      headers:
-         Content-Type: application/json
-         Access-Control-Allow-Origin: "*"
-      status: 204
-      file: path/to/page.html
+- request:
+    url: ^/path/to/anotherThing
+    query:
+      a: anything
+      b: more
+    method: GET
+    headers:
+      Content-Type: application/json
+    post:
+  response:
+    headers:
+      Content-Type: application/json
+      Access-Control-Allow-Origin: '*'
+    status: 204
+    file: path/to/page.html
 
--  request:
-      url: ^/path/to/thing$
-      method: POST
-      headers:
-         Content-Type: application/json
-      post: this is some post data in textual format
-   response:
-      headers:
-         Content-Type: application/json
-      status: 304
+- request:
+    url: ^/path/to/thing$
+    method: POST
+    headers:
+      Content-Type: application/json
+    post: this is some post data in textual format
+  response:
+    headers:
+      Content-Type: application/json
+    status: 304
 ```
 
 #### JSON
+
 ```json
 [
   {
@@ -527,7 +531,7 @@ Submit `POST` requests to `localhost:8889`, `PUT` requests to `localhost:8889/:i
       "url": "^/path/to/something$",
       "post": "this is some post data in textual format",
       "headers": {
-         "authorization": "Basic usernamez:passwordinBase64"
+        "authorization": "Basic usernamez:passwordinBase64"
       },
       "method": "POST"
     },
@@ -544,8 +548,8 @@ Submit `POST` requests to `localhost:8889`, `PUT` requests to `localhost:8889/:i
     "request": {
       "url": "^/path/to/anotherThing",
       "query": {
-         "a": "anything",
-         "b": "more"
+        "a": "anything",
+        "b": "more"
       },
       "headers": {
         "Content-Type": "application/json"
@@ -616,10 +620,10 @@ For a given endpoint, stubby only cares about matching the properties of the req
 For instance, the following will match any `POST` request to the root url:
 
 ```yaml
--  request:
-      url: /
-      method: POST
-   response: {}
+- request:
+    url: /
+    method: POST
+  response: {}
 ```
 
 The request could have any headers and any post body it wants. It will match the above.
@@ -645,70 +649,78 @@ for each <endpoint> of stored endpoints {
 Add `stubby` as a module within your project's directory:
 
 ```
-    npm install stubby
+    npm install @calarconpieriz/stubby
 ```
 
 Then within your project files you can do something like:
 
 ```javascript
-    var Stubby = require('stubby').Stubby;
-    var mockService = new Stubby();
+var Stubby = require('stubby').Stubby;
+var mockService = new Stubby();
 
-    mockService.start();
+mockService.start();
 ```
 
 What can I do with it, you ask? Read on!
 
 #### start(options, [callback])
 
-* `options`: an object containing parameters with which to start this stubby. Parameters go along with the full-name flags used from the command line.
-   * `stubs`: port number to run the stubs portal
-   * `admin`: port number to run the admin portal
-   * `tls`: port number to run the stubs portal over https
-   * `data`: JavaScript Object/Array containing endpoint data
-   * `location`: address/hostname at which to run stubby.
-   * `key`: keyfile contents (in PEM format)
-   * `cert`: certificate file contents (in PEM format)
-   * `pfx`: pfx file contents (mutually exclusive with key/cert options)
-   * `watch`: filename to monitor and load as stubby's data when changes occur
-   * `quiet`: defaults to `true`. Pass in `false` to have console output (if available)
-   * `_httpsOptions`: additional options to pass to the [underlying tls
-     server](http://nodejs.org/api/tls.html#tls_tls_createserver_options_secureconnectionlistener).
-   * `caseSensitiveHeaders`: if false (the default), all response headers are lower-cased.
-* `callback`: takes one parameter: the error message (if there is one), undefined otherwise
+- `options`: an object containing parameters with which to start this stubby. Parameters go along with the full-name flags used from the command line.
+  - `stubs`: port number to run the stubs portal
+  - `admin`: port number to run the admin portal
+  - `tls`: port number to run the stubs portal over https
+  - `data`: JavaScript Object/Array containing endpoint data
+  - `location`: address/hostname at which to run stubby.
+  - `key`: keyfile contents (in PEM format)
+  - `cert`: certificate file contents (in PEM format)
+  - `pfx`: pfx file contents (mutually exclusive with key/cert options)
+  - `watch`: filename to monitor and load as stubby's data when changes occur
+  - `quiet`: defaults to `true`. Pass in `false` to have console output (if available)
+  - `_httpsOptions`: additional options to pass to the [underlying tls
+    server](http://nodejs.org/api/tls.html#tls_tls_createserver_options_secureconnectionlistener).
+  - `caseSensitiveHeaders`: if false (the default), all response headers are lower-cased.
+- `callback`: takes one parameter: the error message (if there is one), undefined otherwise
 
 #### start([callback])
+
 Identical to previous signature, only all options are assumed to be defaults.
 
 #### stop([callback])
+
 closes the connections and ports being used by stubby's stubs and admin portals. Executes `callback` afterward.
 
 #### get(id, callback)
+
 Simulates a GET request to the admin portal, with the callback receiving the resultant data.
 
-* `id`: the id of the endpoint to retrieve. If omitted, an array of all registered endpoints is passed the callback.
-* `callback(err, endpoint)`: `err` is defined if no endpoint exists with the given id. Else, `endpoint` is populated.
+- `id`: the id of the endpoint to retrieve. If omitted, an array of all registered endpoints is passed the callback.
+- `callback(err, endpoint)`: `err` is defined if no endpoint exists with the given id. Else, `endpoint` is populated.
 
 #### get(callback)
+
 Simulates a GET request to the admin portal, with the callback receiving the resultant data.
 
-* `id`: the id of the endpoint to retrieve. If omitted, an array of all registered endpoints is passed the callback.
-* `callback(endpoints)`: takes a single parameter containing an array of returned results. Empty if no endpoints are registered
+- `id`: the id of the endpoint to retrieve. If omitted, an array of all registered endpoints is passed the callback.
+- `callback(endpoints)`: takes a single parameter containing an array of returned results. Empty if no endpoints are registered
 
 #### post(data, [callback])
-* `data`: an endpoint object to store in stubby
-* `callback(err, endpoint)`: if all goes well, gets executed with the created endpoint. If there is an error, gets called with the error message.
+
+- `data`: an endpoint object to store in stubby
+- `callback(err, endpoint)`: if all goes well, gets executed with the created endpoint. If there is an error, gets called with the error message.
 
 #### put(id, data, [callback])
-* `id`: id of the endpoint to update.
-* `data`: data with which to replace the endpoint.
-* `callback(err)`: executed with no passed parameters if successful. Else, passed the error message.
+
+- `id`: id of the endpoint to update.
+- `data`: data with which to replace the endpoint.
+- `callback(err)`: executed with no passed parameters if successful. Else, passed the error message.
 
 #### delete([id], callback)
-* `id`: id of the endpoint to destroy. If omitted, all endoints are cleared from stubby.
-* `callback()`: called after the endpoint has been removed
+
+- `id`: id of the endpoint to destroy. If omitted, all endoints are cleared from stubby.
+- `callback()`: called after the endpoint has been removed
 
 #### Example
+
 ```javascript
 var Stubby = require('stubby').Stubby;
 
@@ -719,41 +731,44 @@ stubby1.start({
   stubs: 80,
   admin: 81,
   location: 'localhost',
-  data: [{
-    request: { url: "/anywhere" }
-  },{
-    request: { url: "/but/here" }
-  }]
+  data: [
+    {
+      request: { url: '/anywhere' },
+    },
+    {
+      request: { url: '/but/here' },
+    },
+  ],
 });
 
 stubby2.start({
   stubs: 82,
   admin: 83,
-  location: '127.0.0.2'
+  location: '127.0.0.2',
 });
 ```
 
 ## See Also
 
-* **[stubby4j](https://github.com/azagniotov/stubby4j):** A java implementation of stubby
-* **[stubby4net](https://github.com/mrak/stubby4net):** A .NET implementation of stubby
-* **[grunt-stubby](https://github.com/h2non/grunt-stubby):** grunt integration with stubby
-* **[gulp-stubby-server](https://github.com/felixzapata/gulp-stubby-server):** gulp integration with stubby
+- **[stubby4j](https://github.com/azagniotov/stubby4j):** A java implementation of stubby
+- **[stubby4net](https://github.com/mrak/stubby4net):** A .NET implementation of stubby
+- **[grunt-stubby](https://github.com/h2non/grunt-stubby):** grunt integration with stubby
+- **[gulp-stubby-server](https://github.com/felixzapata/gulp-stubby-server):** gulp integration with stubby
 
 ## TODO
 
 Non-breaking changes
 
-* Allow multi-value fields (arrays and maps) as query/post params
+- Allow multi-value fields (arrays and maps) as query/post params
 
 Breaking changes
 
-* Intepret configuration values beginning and ending with `/` as regular
+- Intepret configuration values beginning and ending with `/` as regular
   expressions, otherwise consider as exact string matches
-  * if `/` surrounded values do not compile as regex, log error to
+  - if `/` surrounded values do not compile as regex, log error to
     console/response when adding
 
 ## NOTES
 
-* __Copyright__ 2015 Eric Mrak, Alexander Zagniotov
-* __License__ Apache v2.0
+- **Copyright** 2015 Eric Mrak, Alexander Zagniotov
+- **License** Apache v2.0
